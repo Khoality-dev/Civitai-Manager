@@ -1,1 +1,3 @@
-CIVITAI_API_KEY = "" # REPLACE WITH YOUR API KEY
+import os
+
+CIVITAI_API_KEY = os.environ.get('CIVITAI_API_KEY')
