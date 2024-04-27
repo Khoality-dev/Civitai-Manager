@@ -22,7 +22,13 @@ def upgrade() -> None:
     op.create_table(
         'models',
         sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('name', sa.String(50), nullable=False),
+        sa.Column('name', sa.String(100), nullable=False),
+        sa.Column('source_url', sa.String(), nullable=False),
+        sa.Column('checksum', sa.String(), nullable=False),
+        sa.Column('platform', sa.String(50), nullable=False),
+        sa.Column('descriptions', sa.String(), nullable=False, default=""),
+        sa.Column('activation_words', sa.String(), nullable=False, default=""),
+        sa.Column('custom_activation_words', sa.String())
     )
 
 
