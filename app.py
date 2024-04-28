@@ -17,22 +17,6 @@ def get_models():
     return jsonify({"models": model_list})
 
 
-@app.route("/add-model", methods=["POST"])
-def add_model():
-    # Get data from the request
-    data = request.json
-    model_name = data.get("name")
-
-    # Create a new model object
-    new_model = Model(name=model_name)
-
-    # Add the new model to the database
-    db.session.add(new_model)
-    db.session.commit()
-
-    return jsonify({"message": "User added successfully"}), 201
-
-
 @app.route("/fetch-model")
 def fetch_model():
     model_id = request.args.get("model_id")
@@ -52,7 +36,7 @@ def fetch_model():
 @app.route("/sync-model-version")
 def sync_model():
     model_version_id = request.args.get("model_version_id")
-    
+
     version = db.session.query(Version).filter_by(id=model_version_id).first()
     json_blob = json.loads(version.blob)
     preview_images = json_blob["images"]
@@ -90,7 +74,9 @@ def sync_model():
 
     model_name = sanitize_filename(version.model.name)
 
-    destination_directory = os.path.join(app_configs.MODELS_DIRECTORY, model_type, model_name)
+    destination_directory = os.path.join(
+        app_configs.MODELS_DIRECTORY, model_type, model_name
+    )
 
     file_blobs = json_blob["files"]
     destination_paths = []
@@ -98,17 +84,19 @@ def sync_model():
     for file in file_blobs:
         filename = file["name"]
         file_path = os.path.join(destination_directory, filename)
-        if (not (os.path.isfile(file_path))):
+        if not (os.path.isfile(file_path)):
             destination_paths.append(file_path)
             urls.append(file["downloadUrl"])
         else:
             print("Calculating checksum {}...".format(filename))
             calculated_checksum = calculate_sha256(file_path)
             print("Done!")
-            if (calculated_checksum is not None and file["hashes"]["SHA256"].lower() != calculated_checksum.lower()):
+            if (
+                calculated_checksum is not None
+                and file["hashes"]["SHA256"].lower() != calculated_checksum.lower()
+            ):
                 destination_paths.append(file_path)
                 urls.append(file["downloadUrl"])
-            
 
     for url, destination_path in zip(urls, destination_paths):
         filename = os.path.basename(destination_path)
