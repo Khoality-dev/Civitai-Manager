@@ -24,7 +24,6 @@ class Version(Base):
     version_id = Column("version_id", String(50))
     name = Column("name", String(100))
     type = Column("type", String(50))
-    file_checksum = Column("file_checksum", String())
     description = Column("description", String(), default="")
     activation_words = Column("activation_words", String())
     custom_activation_words = Column("custom_activation_words", String())
