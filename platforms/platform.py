@@ -6,5 +6,5 @@ class Platform:
         self.api_key = api_key
 
     @abstractmethod
-    def get_model_info(self, url):
+    def fetch_model_info(self, params):
         pass
