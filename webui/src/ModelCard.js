@@ -33,22 +33,25 @@ function ModelCard({ model_id, model_title, model_type }) {
   };
 
   useEffect(() => {
-    retrieveNewImage();
-    const interval = setInterval(() => {
-      retrieveNewImage();
-    }, 5000);
+    const timeoutFunc = () => {
 
-    // Clean up the interval to prevent memory leaks
-    return () => clearInterval(interval);
+      retrieveNewImage();
+
+      const randomDelay = Math.random() * 30000 + 10000;
+
+      setTimeout(timeoutFunc, randomDelay);
+    };
+    const initialDelay = 0;
+    setTimeout(timeoutFunc, initialDelay);
+
+    return () => clearTimeout(timeoutFunc);
   }, []);
 
   const handleOnMouseEnter = () => {
     setShowDetails(true);
-    console.log(showDetails);
   };
   const handleOnMouseLeave = () => {
     setShowDetails(false);
-    console.log(showDetails);
   };
   const expandFactor = 1.05;
   return (
