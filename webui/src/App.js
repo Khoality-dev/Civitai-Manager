@@ -7,13 +7,31 @@ function App() {
   const n = 100;
   const model_version_ids = new Array(n).fill(14);
   return (
-    <Grid container spacing={5} alignItems="center" justifyContent="space-evenly" padding={5}>
-      {model_version_ids.map((value, id) => (
-          <Grid item key={id} sm={2}>
+    <Box paddingTop={5} paddingLeft={2.5} paddingRight={2.5}>
+      <Grid
+        container
+        alignItems="center"
+        justifyContent="space-evenly"
+        rowGap={5}
+        columnGap={3}
+      >
+        {model_version_ids.map((value, id) => (
+          <Grid
+            item
+            key={id}
+            style={{
+              width: 300,
+              height: 400,
+              display: "flex",
+              justifyContent: "space-evenly",
+              alignItems: "center",
+            }}
+          >
             <ModelCard model_version_id={value} />
-        </Grid>
-      ))}
-    </Grid>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   );
 }
 

@@ -10,8 +10,7 @@ import Typography from "@mui/material/Typography";
 function ModelCard({ model_version_id }) {
   const [imageSrc, setImageSrc] = useState("");
   const [showDetails, setShowDetails] = useState(false);
-  const cardStandardSize = [340, 280];
-  const [raised, setRaised] = useState(false);
+  const cardStandardSize = [380, 320];
   useEffect(() => {
     axios
       .get("/api/image", {
