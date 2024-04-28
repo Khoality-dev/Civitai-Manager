@@ -7,16 +7,17 @@ import Box from "@mui/material/Box";
 import { Grow } from "@mui/material";
 import Typography from "@mui/material/Typography";
 
-function ModelCard({ model_version_id }) {
+function ModelCard({ model_id, model_title, model_type }) {
   const [imageSrc, setImageSrc] = useState("");
   const [showDetails, setShowDetails] = useState(false);
   const cardStandardSize = [380, 320];
-  useEffect(() => {
+
+  const retrieveNewImage = () => {
     axios
-      .get("/api/image", {
+      .get("/preview-image", {
         responseType: "arraybuffer",
         params: {
-          model_version_id: model_version_id,
+          model_id: model_id,
         },
       })
       .then((response) => {
@@ -29,6 +30,16 @@ function ModelCard({ model_version_id }) {
         setImageSrc("data:image/jpeg;base64," + base64);
       })
       .catch((error) => console.error("Error fetching image:", error));
+  };
+
+  useEffect(() => {
+    retrieveNewImage();
+    const interval = setInterval(() => {
+      retrieveNewImage();
+    }, 5000);
+
+    // Clean up the interval to prevent memory leaks
+    return () => clearInterval(interval);
   }, []);
 
   const handleOnMouseEnter = () => {
@@ -73,8 +84,8 @@ function ModelCard({ model_version_id }) {
                   padding: "10px",
                 }}
               >
-                <Typography variant="h5">Lizard</Typography>
-                <Typography variant="body2">Subtitle</Typography>
+                <Typography variant="h5">{model_title}</Typography>
+                <Typography variant="body2">{model_type}</Typography>
               </Box>
             </Grow>
           )}

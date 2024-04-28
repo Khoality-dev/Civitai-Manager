@@ -11,11 +11,19 @@ import json
 from utils import calculate_sha256, sanitize_filename
 
 
-@app.route('/api/image')
+@app.route('/preview-image')
 def get_image():
-    model_version_id = request.args.get("model_version_id")
-    if (model_version_id is None):
+    model_id = request.args.get("model_id")
+    if (model_id is None):
         return jsonify({"error": "Some erros occurred!"}), 500
+    model_versions = db.session.query(Version).filter_by(model_id=model_id).all()
+
+    # If there are no versions, return None
+    if not model_versions:
+        return jsonify({"error": "Some erros occurred!"}), 500
+
+    model_version_id = model_versions[random.randint(0, len(model_versions) - 1)].id
+
     directory = f"images/{model_version_id}/model_previews"
     image_filenames = [filename for filename in os.listdir(directory) if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg")]
     image_filename = random.choice(image_filenames)
@@ -24,10 +32,9 @@ def get_image():
 
 @app.route("/models")
 def get_models():
-    models = Model.query.all()
-    model_list = [{"id": model.id, "name": model.name} for model in models]
+    models = db.session.query(Model).all()
+    model_list = [{"id": model.id, "name": model.name, "type": model.type} for model in models]
     return jsonify({"models": model_list})
-
 
 @app.route("/fetch-model")
 def fetch_model():
@@ -51,31 +58,8 @@ def sync_model():
 
     version = db.session.query(Version).filter_by(id=model_version_id).first()
     json_blob = json.loads(version.blob)
-    preview_images = json_blob["images"]
-    urls = [image["url"] for image in preview_images]
-    destination_filenames = [
-        url.split("/")[4] + "." + url.split(".")[-1] for url in urls
-    ]
-
-    destination_directory = os.path.join(
-        app_configs.IMAGES_DIRECTORY, str(model_version_id), "model_previews"
-    )
-    destination_paths = [
-        os.path.join(destination_directory, filename)
-        for filename in destination_filenames
-    ]
 
     platform = Civitai(app_configs.CIVITAI_API_KEY)
-
-    # Download preview images
-    success = True
-    print("Downloading images:")
-    for url, destination_path in tqdm(zip(urls, destination_paths)):
-        success = success and platform.download_file(
-            url, destination_path, force=False, progress_bar=False
-        )
-
-    print("Done!")
 
     # Download model
     model_type = ""

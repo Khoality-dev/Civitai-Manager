@@ -2,10 +2,27 @@ import React from "react";
 import ModelCard from "./ModelCard";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import axios from './axios';
+import { useState, useEffect } from 'react';
 
 function App() {
-  const n = 100;
-  const model_version_ids = new Array(n).fill(14);
+  const [models, setModels] = useState([]);
+
+  useEffect(() => {
+    // Fetch model IDs from the backend
+    axios.get('/models')
+      .then(response => {
+        // Extract model IDs from the response data
+        const list_models = response.data["models"];
+        // Update the state with the model IDs
+        setModels(list_models);
+      })
+      .catch(error => {
+        console.error('Error fetching model IDs:', error);
+      });
+  }, []); // Empty dependency array ensures the effect runs only once, like componentDidMount
+
+
   return (
     <Box paddingTop={5} paddingLeft={2.5} paddingRight={2.5}>
       <Grid
@@ -15,7 +32,7 @@ function App() {
         rowGap={5}
         columnGap={3}
       >
-        {model_version_ids.map((value, id) => (
+        {models.map((model, id) => (
           <Grid
             item
             key={id}
@@ -27,7 +44,7 @@ function App() {
               alignItems: "center",
             }}
           >
-            <ModelCard model_version_id={value} />
+            <ModelCard model_id={model["id"]} model_title={model["name"]}  model_type={model["type"]} />
           </Grid>
         ))}
       </Grid>

@@ -5,6 +5,7 @@ from tqdm import tqdm
 from database.models import Model, Version
 from platforms.platform import Platform
 from app_context import db
+import app_configs
 import requests
 
 class Civitai(Platform):
@@ -38,6 +39,7 @@ class Civitai(Platform):
             db.session.merge(model)
             db.session.commit()
 
+            model = db.session.query(Model).filter_by(model_id = model_params["model_id"]).first()
             children = model_json["modelVersions"]
             for child in children:
                 child_params = {
@@ -57,6 +59,32 @@ class Civitai(Platform):
 
                 db.session.merge(version)
                 db.session.commit()
+
+                version = db.session.query(Version).filter_by(version_id = child_params["version_id"]).first()
+                json_blob = json.loads(version.blob)
+                preview_images = json_blob["images"]
+                urls = [image["url"] for image in preview_images]
+                destination_filenames = [
+                    url.split("/")[4] + "." + url.split(".")[-1] for url in urls
+                ]
+
+                destination_directory = os.path.join(
+                    app_configs.IMAGES_DIRECTORY, str(version.id), "model_previews"
+                )
+                destination_paths = [
+                    os.path.join(destination_directory, filename)
+                    for filename in destination_filenames
+                ]
+
+                # Download preview images
+                success = True
+                print("Downloading images:")
+                for url, destination_path in tqdm(zip(urls, destination_paths)):
+                    success = success and self.download_file(
+                        url, destination_path, force=False, progress_bar=False
+                    )
+
+                print("Done!")
             
             return model_json
         else:
