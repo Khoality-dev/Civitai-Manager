@@ -10,7 +10,7 @@ import requests
 class Civitai(Platform):
     def __init__(self, api_key):
         super().__init__(api_key=api_key)
-        self.base_url = "https://civitai.com/api/"
+        self.base_url = "https://civitai.com/api/v1"
 
     def fetch_model_info(self, params):
         if ("model_id" not in params):
@@ -71,7 +71,7 @@ class Civitai(Platform):
         if not os.path.exists(parent_dir):
             os.makedirs(parent_dir)
         
-        url = url + "?token={}".format(self.api_key)
+        url = url + ("?" if "?" not in url else "&") + "token={}".format(self.api_key)
 
         response = requests.get(url, stream=True)
 

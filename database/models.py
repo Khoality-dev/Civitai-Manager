@@ -14,7 +14,7 @@ class Model(Base):
     platform = Column("platform", String(50))
     request_url = Column("request_url", String())
     blob = Column("blob", String())
-
+    versions = relationship("Version", back_populates="model")
 
 class Version(Base):
     __tablename__ = "versions"
@@ -28,3 +28,5 @@ class Version(Base):
     activation_words = Column("activation_words", String())
     custom_activation_words = Column("custom_activation_words", String())
     blob = Column("blob", String())
+
+    model = relationship("Model", back_populates="versions")

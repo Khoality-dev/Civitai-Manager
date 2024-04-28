@@ -7,7 +7,7 @@ from tqdm import tqdm
 import app_configs
 import json
 
-from utils import calculate_sha256
+from utils import calculate_sha256, sanitize_filename
 
 
 @app.route("/models")
@@ -53,8 +53,8 @@ def fetch_model():
 def sync_model():
     model_version_id = request.args.get("model_version_id")
     
-    model = db.session.query(Version).filter_by(id=model_version_id).first()
-    json_blob = json.loads(model.blob)
+    version = db.session.query(Version).filter_by(id=model_version_id).first()
+    json_blob = json.loads(version.blob)
     preview_images = json_blob["images"]
     urls = [image["url"] for image in preview_images]
     destination_filenames = [
@@ -83,12 +83,14 @@ def sync_model():
 
     # Download model
     model_type = ""
-    if str(model.type).lower() == "lora":
+    if str(version.type).lower() == "lora":
         model_type = "Lora"
-    elif str(model.type).lower() == "checkpoint":
+    elif str(version.type).lower() == "checkpoint":
         model_type = "Stable-diffusion"
 
-    destination_directory = os.path.join(app_configs.MODELS_DIRECTORY, model_type)
+    model_name = sanitize_filename(version.model.name)
+
+    destination_directory = os.path.join(app_configs.MODELS_DIRECTORY, model_type, model_name)
 
     file_blobs = json_blob["files"]
     destination_paths = []
@@ -96,12 +98,17 @@ def sync_model():
     for file in file_blobs:
         filename = file["name"]
         file_path = os.path.join(destination_directory, filename)
-        if (
-            not (os.path.isfile(file_path))
-            or file["hashes"]["SHA256"].lower() != calculate_sha256(file_path).lower()
-        ):
+        if (not (os.path.isfile(file_path))):
             destination_paths.append(file_path)
             urls.append(file["downloadUrl"])
+        else:
+            print("Calculating checksum {}...".format(filename))
+            calculated_checksum = calculate_sha256(file_path)
+            print("Done!")
+            if (calculated_checksum is not None and file["hashes"]["SHA256"].lower() != calculated_checksum.lower()):
+                destination_paths.append(file_path)
+                urls.append(file["downloadUrl"])
+            
 
     for url, destination_path in zip(urls, destination_paths):
         filename = os.path.basename(destination_path)
