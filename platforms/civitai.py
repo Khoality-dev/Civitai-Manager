@@ -51,7 +51,7 @@ class Civitai(Platform):
                     "blob": json.dumps(child)
                 }
                 version = Version(**child_params)
-                existing_child = db.session.query(Version).filter_by(model_id = child_params["model_id"],version_id = child_params["version_id"]).first()
+                existing_child = db.session.query(Version).filter_by(version_id = child_params["version_id"]).first()
                 if existing_child:
                     version.id = existing_child.id
 
