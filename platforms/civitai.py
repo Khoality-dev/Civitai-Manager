@@ -45,9 +45,9 @@ class Civitai(Platform):
                     "type":model_json["type"],
                     "file_checksum":"",
                     "description": model_json["description"],
-                    "activation_words": child["trainedWords"] if "trainedWords" in child else [],
+                    "activation_words": json.dumps({"prompts": child["trainedWords"] if "trainedWords" in child else []}),
                     "custom_activation_words":"",
-                    "blob": str(child)
+                    "blob": json.dumps(child)
                 }
                 version = Version(**child_params)
                 existing_child = db.session.query(Version).filter_by(model_id = child_params["model_id"],version_id = child_params["version_id"]).first()
