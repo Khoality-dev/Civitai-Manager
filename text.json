@@ -1,0 +1,214 @@
+{
+    "id": 471897,
+    "name": "v2.0",
+    "index": 0,
+    "status": "Published",
+    "modelId": 411758,
+    "baseModel": "Pony",
+    "createdAt": "2024-04-27T21:17:26.787",
+    "nsfwLevel": 23,
+    "description": "<ul><li><p>retrained with came/rex</p></li><li><p>improved base outfit</p></li></ul>",
+    "publishedAt": "2024-04-27T21:19:43.984",
+    "availability": "Public",
+    "trainedWords": [
+        "NerissaRavencroft, colored inner hair, black hair, blue hair, red eyes, slit pupils, uneven horns, long hair",
+        "NerissaBase, colored inner hair, black hair, blue hair, red eyes, slit pupils, uneven horns, long hair, hair ornament, black ribbon, fur-trimmed sleeves, black sleeves, collared shirt, white shirt, ribbed shirt, shoulder cutout, black gloves, black skirt, miniskirt, side slit, singe leg pantyhose, checkered pantyhose, black thighhighs, asymmetrical legwear",
+        "NerissaNewYears, streaked hair, black hair, blue hair, red eyes, slit pupils, uneven horns, hair bun, hair flowers, hairclip, tassel earrings, frilled choker, black kimono, feather-trimmed kimono, floral print, white fur scarf, black lace gloves"
+    ],
+    "stats": {
+        "downloadCount": 80,
+        "ratingCount": 0,
+        "rating": 0,
+        "thumbsUpCount": 18,
+        "thumbsDownCount": 0
+    },
+    "files": [
+        {
+            "id": 390492,
+            "sizeKB": 56102.79296875,
+            "name": "ChamNerissaRavencroftPonyXLCame.safetensors",
+            "type": "Model",
+            "pickleScanResult": "Success",
+            "pickleScanMessage": "No Pickle imports",
+            "virusScanResult": "Success",
+            "virusScanMessage": null,
+            "scannedAt": "2024-04-27T21:21:30.595Z",
+            "metadata": {
+                "format": "SafeTensor"
+            },
+            "hashes": {
+                "AutoV1": "3B9986FC",
+                "AutoV2": "7E3708B53D",
+                "SHA256": "7E3708B53D08B41B9A102DA412E1703B9A48E1CB9EB849FC7C6918F2BD57AD2A",
+                "CRC32": "097C03DD",
+                "BLAKE3": "3E4597E2095A44F18ADDB7A2101A1D1381F8144408A53D6CEFB547D80B235988",
+                "AutoV3": "F38AFF5DE432"
+            },
+            "downloadUrl": "https://civitai.com/api/download/models/471897",
+            "primary": true
+        }
+    ],
+    "images": [
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/80d09277-5b4a-4663-af17-61aa1de59e71/width=450/10931243.jpeg",
+            "nsfwLevel": 1,
+            "width": 1664,
+            "height": 2432,
+            "hash": "UKE{X}oeIoMy~Vt7IAIos*WBIUM{E2t7Rnxu",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/cb096912-7a7a-47f6-b4e0-55f5dc0fb9d8/width=450/10931240.jpeg",
+            "nsfwLevel": 1,
+            "width": 832,
+            "height": 1216,
+            "hash": "U7ECRi5TI7kEI_S69GNK00%1~WM|-3$z~B-o",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/443052e1-50e5-4355-8cab-158211adbdb0/width=450/10931242.jpeg",
+            "nsfwLevel": 1,
+            "width": 832,
+            "height": 1216,
+            "hash": "UIG[sB-p02D+YRf,m*ad9$M|#j%1tQn~IVW?",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0474f1bb-da48-4702-b5e0-94e7b20b7005/width=450/10931241.jpeg",
+            "nsfwLevel": 1,
+            "width": 832,
+            "height": 1216,
+            "hash": "U7E.w[%OB:D%|~xIZN9Z00#*~VK49Y$x5Qxu",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/295e0c33-50bc-4ec5-b91d-4dfc4d4c5b8c/width=450/10931244.jpeg",
+            "nsfwLevel": 2,
+            "width": 832,
+            "height": 1216,
+            "hash": "UUKdxioL_N%M~qt7e.RjS$ofoJWBNHWCxZof",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/490341d0-c8ef-405e-b8a7-2db0f7440776/width=450/10931247.jpeg",
+            "nsfwLevel": 4,
+            "width": 832,
+            "height": 1216,
+            "hash": "UBIELr8_-#9b0f9a~WMxDhNx01?G4n^+-pt7",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f579be3a-23c7-43bd-8fab-bedbc29414cd/width=450/10931248.jpeg",
+            "nsfwLevel": 1,
+            "width": 832,
+            "height": 1216,
+            "hash": "UcHxKQ-:M{M{~V%2RjIoR+t7s:WB%LxaRkxt",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/af9d226a-10bd-41a2-8370-db5844b10114/width=450/10931249.jpeg",
+            "nsfwLevel": 1,
+            "width": 832,
+            "height": 1216,
+            "hash": "URIX?axa?wE1~VxZD%RjtlxZxDxtozoJsoRk",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8d13c31e-01de-4adf-84d4-50021d6225d9/width=450/10931245.jpeg",
+            "nsfwLevel": 1,
+            "width": 832,
+            "height": 1216,
+            "hash": "UdE3;nozS1oy~poMS#oe%1jFRjoexua}Rja#",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1f91f408-58b9-4f77-adce-e2ad3cf2b1d3/width=450/10931246.jpeg",
+            "nsfwLevel": 2,
+            "width": 832,
+            "height": 1216,
+            "hash": "USF6,@t7pco#.A%gs;RPETx]enV@tmj]Wno|",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/dd29882d-c737-44dd-9c77-70d6a7ca4ecb/width=450/10931251.jpeg",
+            "nsfwLevel": 1,
+            "width": 832,
+            "height": 1216,
+            "hash": "UJJRXPxuFgxvJ6o#R+t6.TIpn4WVtn-:xCM}",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/6dcc5de1-4392-4d47-84bb-b44e8d3eb8f1/width=450/10931254.jpeg",
+            "nsfwLevel": 1,
+            "width": 832,
+            "height": 1216,
+            "hash": "URH.HO^+I@Iq~TRjM|n#j]fkDiogo#kC9ZM{",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/6127231c-06c9-4c72-a96f-eca84334302d/width=450/10931252.jpeg",
+            "nsfwLevel": 2,
+            "width": 1664,
+            "height": 2432,
+            "hash": "ULCsp}-pF4Ip?ws:R,Rk9ZRk$yocD%WAsoay",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1453f554-81bf-447f-9fd8-6a8e73f40ee4/width=450/10931250.jpeg",
+            "nsfwLevel": 1,
+            "width": 832,
+            "height": 1216,
+            "hash": "UIJRR6t7~qxaIAt7D%Rj_2oLxaoeD+ayWCoL",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d92963a4-25a6-410b-945c-87d9901420a6/width=450/10931256.jpeg",
+            "nsfwLevel": 1,
+            "width": 832,
+            "height": 1216,
+            "hash": "UKIhpj0NSs.8T#WA?cR+AfxoVxxZ9*jcV_M}",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f86cd2f1-1470-4273-8143-71159b4b1bb9/width=450/10931255.jpeg",
+            "nsfwLevel": 4,
+            "width": 832,
+            "height": 1216,
+            "hash": "UXJ7j-~Wk?xu4:Rjn~NG9FRPnht6jYRkn~oL",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/5b2e5f34-dffd-4728-afe8-5aee5832c5bf/width=450/10931261.jpeg",
+            "nsfwLevel": 16,
+            "width": 832,
+            "height": 1216,
+            "hash": "UTKT-~~q%#-;%~-:%LRP^+M{a0RQ?bxuNGR*",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/b9f6dfdd-3310-49e3-9132-e1d924de9f8e/width=450/10931268.jpeg",
+            "nsfwLevel": 16,
+            "width": 832,
+            "height": 1216,
+            "hash": "URJ@Ud~VOrM{K4xuV@IU9Faer?M|-qt7xuof",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c51388f6-9cc4-4262-a522-bd810e0813a0/width=450/10931269.jpeg",
+            "nsfwLevel": 16,
+            "width": 832,
+            "height": 1216,
+            "hash": "U8HnNm00AX%M00-psQE200E2~VIVD*%1ixs.",
+            "type": "image"
+        },
+        {
+            "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d2a08903-33aa-4cec-b9dd-343823f644c7/width=450/10931257.jpeg",
+            "nsfwLevel": 16,
+            "width": 832,
+            "height": 1216,
+            "hash": "U6K^NoXo0kVt00xu?GIU00^h}?ng}lbI?GM|",
+            "type": "image"
+        }
+    ],
+    "downloadUrl": "https://civitai.com/api/download/models/471897"
+}

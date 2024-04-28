@@ -1,5 +1,6 @@
 import os
-from flask import jsonify, request
+import random
+from flask import jsonify, request, send_file
 from database.models import Model, Version
 from app_context import app, db
 from platforms.civitai import Civitai
@@ -9,6 +10,17 @@ import json
 
 from utils import calculate_sha256, sanitize_filename
 
+
+@app.route('/api/image')
+def get_image():
+    model_version_id = request.args.get("model_version_id")
+    if (model_version_id is None):
+        return jsonify({"error": "Some erros occurred!"}), 500
+    directory = f"images/{model_version_id}/model_previews"
+    image_filenames = [filename for filename in os.listdir(directory) if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg")]
+    image_filename = random.choice(image_filenames)
+    image_path = os.path.join(directory,image_filename)
+    return send_file(image_path)
 
 @app.route("/models")
 def get_models():
@@ -123,4 +135,4 @@ def setup():
 
 if __name__ == "__main__":
     setup()
-    app.run(debug=True)
+    app.run(ssl_context=('cert.pem', 'key.pem'),debug=True)
