@@ -36,6 +36,20 @@ def get_models():
     model_list = [{"id": model.id, "name": model.name, "type": model.type} for model in models]
     return jsonify({"models": model_list})
 
+@app.route("/model/versions")
+def get_model_versions():
+    id = request.args.get("id")
+    if (id is None):
+        return jsonify({"error": "Some erros occurred!"}), 500
+    
+    versions = db.session.query(Version).filter_by(model_id=id).all()
+
+    if (len(versions) == 0):
+        return jsonify({"error": "Some erros occurred!"}), 500
+
+    versions = [{"id": version.id, "name": version.name} for version in versions]
+    return jsonify({"versions": versions})
+
 @app.route("/fetch-model")
 def fetch_model():
     model_id = request.args.get("model_id")
@@ -94,6 +108,7 @@ def sync_model():
                 destination_paths.append(file_path)
                 urls.append(file["downloadUrl"])
 
+    success = True
     for url, destination_path in zip(urls, destination_paths):
         filename = os.path.basename(destination_path)
         print("Downloading {}...".format(filename), sep="")

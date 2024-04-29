@@ -4,6 +4,8 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import axios from './axios';
 import { useState, useEffect } from 'react';
+import ModalWindow from "./ModalWindow";
+
 
 function App() {
   const [models, setModels] = useState([]);
@@ -22,8 +24,18 @@ function App() {
       });
   }, []); // Empty dependency array ensures the effect runs only once, like componentDidMount
 
+  const [selectedModel, setSelectedModel] = useState(-1);
+
+  const handleClick = (modelId) => {
+    setSelectedModel(modelId);
+  };
+
+  const handleClose = () => {
+    setSelectedModel(-1);
+  };
 
   return (
+    <>
     <Box paddingTop={5} paddingLeft={2.5} paddingRight={2.5}>
       <Grid
         container
@@ -44,11 +56,13 @@ function App() {
               alignItems: "center",
             }}
           >
-            <ModelCard model_id={model["id"]} model_title={model["name"]}  model_type={model["type"]} />
+            <ModelCard model_id={model["id"]} model_title={model["name"]}  model_type={model["type"]} onClickHandler={handleClick}/>
           </Grid>
         ))}
       </Grid>
     </Box>
+    <ModalWindow open={(selectedModel !== -1)} handleClose={handleClose} modelId={selectedModel} />
+    </>
   );
 }
 

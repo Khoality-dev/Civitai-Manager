@@ -7,7 +7,8 @@ import Box from "@mui/material/Box";
 import { Grow } from "@mui/material";
 import Typography from "@mui/material/Typography";
 
-function ModelCard({ model_id, model_title, model_type }) {
+
+function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
   const [imageSrc, setImageSrc] = useState("");
   const [showDetails, setShowDetails] = useState(false);
   const cardStandardSize = [380, 320];
@@ -65,6 +66,7 @@ function ModelCard({ model_id, model_title, model_type }) {
         <CardActionArea
           onMouseEnter={handleOnMouseEnter}
           onMouseLeave={handleOnMouseLeave}
+          onMouseDown={ () => {onClickHandler(model_id)}}
         >
           <CardMedia
             component="img"
