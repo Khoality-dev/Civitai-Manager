@@ -6,7 +6,7 @@ import { CardActionArea, CardContent } from "@mui/material";
 import Box from "@mui/material/Box";
 import { Grow } from "@mui/material";
 import Typography from "@mui/material/Typography";
-
+import convertImageBufferToUrl from "./utils";
 
 function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
   const [imageSrc, setImageSrc] = useState("");
@@ -15,20 +15,15 @@ function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
 
   const retrieveNewImage = () => {
     axios
-      .get("/preview-image", {
-        responseType: "arraybuffer",
+      .get("/model/preview-images", {
         params: {
-          model_id: model_id,
+          id: model_id,
         },
+        responseType: "arraybuffer",
       })
       .then((response) => {
-        const base64 = btoa(
-          new Uint8Array(response.data).reduce(
-            (data, byte) => data + String.fromCharCode(byte),
-            ""
-          )
-        );
-        setImageSrc("data:image/jpeg;base64," + base64);
+        const url = convertImageBufferToUrl(response.data);
+        setImageSrc(url);
       })
       .catch((error) => console.error("Error fetching image:", error));
   };
@@ -38,7 +33,7 @@ function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
 
       retrieveNewImage();
 
-      const randomDelay = Math.random() * 30000 + 10000;
+      const randomDelay = Math.random() * 100000 + 50000;
 
       setTimeout(timeoutFunc, randomDelay);
     };
