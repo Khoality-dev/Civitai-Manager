@@ -2,10 +2,19 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Typography from "@mui/material/Typography";
-import { IconButton, Stack, Button, Box } from "@mui/material";
+import FormControl from '@mui/material/FormControl';
+import {
+  IconButton,
+  Stack,
+  Button,
+  Box,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useEffect, useState } from "react";
+import { useEffect, useState, version } from "react";
 import axios from "./axios";
+import InputLabel from '@mui/material/InputLabel';
 import convertImageBufferToUrl from "./utils";
 
 const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
@@ -16,8 +25,6 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
   const [listVersions, setListVersions] = useState([]);
 
   useEffect(() => {
-    setCurrentImageIndex(0);
-    setListPreviewImages([]);
     if (modelId !== -1) {
       axios
         .get("/model/versions", {
@@ -26,7 +33,6 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
           },
         })
         .then((response) => {
-          console.log(response.data);
           setListVersions(response.data["versions"]);
           setCurrentModelVersion(response.data["versions"][0]);
         })
@@ -35,6 +41,11 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
         });
     }
   }, [open, modelId]);
+
+  useEffect(() => {
+    setCurrentImageIndex(0);
+    setListPreviewImages([]);
+  }, [currentModelVersion]);
 
   useEffect(() => {
     if (
@@ -66,12 +77,12 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
         const jsonString = new TextDecoder().decode(uint8Array);
         const data = JSON.parse(jsonString);
         if (data["error"] === "Index out of bound!") {
-          setCurrentImageIndex(0);  
+          setCurrentImageIndex(0);
         } else {
           console.error("Error fetching model IDs:", error);
         }
       });
-  }, [currentModelVersion, currentImageIndex, listVersions]);
+  }, [listPreviewImages, currentImageIndex, listVersions]);
 
   const handleOnSyncClick = () => {
     axios
@@ -86,6 +97,16 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
       .catch((error) => {
         console.error("Error fetching model IDs:", error);
       });
+  };
+
+  const handleOnVersionChange = (versionName) => {
+    console.log(versionName);
+    if (version !== "Unknown") {
+      console.log(versionName);
+      setCurrentModelVersion(
+        listVersions.filter((version) => version["name"] === versionName)[0]
+      );
+    }
   };
 
   return (
@@ -116,6 +137,26 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
           />
         )}
         <Stack direction="column" marginLeft={"10px"} width={"100%"}>
+          {currentModelVersion !== null && (
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+          <InputLabel id="version-label">Version</InputLabel>
+          <Select
+            label="Version"
+            labelId="version-label"
+            value={currentModelVersion.name} // Assuming "name" is the property you want to use as the value
+            onChange={(event) => {
+              handleOnVersionChange(event.target.value);
+            }}
+          >
+            {listVersions.map((version) => (
+              <MenuItem key={version.name} value={version.name}>
+                {version.name}
+              </MenuItem>
+            ))}
+          </Select>
+          </FormControl>
+
+          )}
           <Typography textAlign={"center"}>Hello World</Typography>
           <Typography textAlign={"center"}>Hello World</Typography>
           <Typography textAlign={"center"}>Hello World</Typography>
