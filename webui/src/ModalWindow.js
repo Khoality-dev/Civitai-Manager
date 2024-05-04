@@ -2,7 +2,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Typography from "@mui/material/Typography";
-import { IconButton, Stack, Button } from "@mui/material";
+import { IconButton, Stack, Button, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState } from "react";
 import axios from "./axios";
@@ -35,7 +35,6 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
   useEffect(() => {
     console.log(listVersions);
     if (listVersions.length > 0) {
-      
       setCurrentModelVersionId(listVersions[0]["id"]);
       setCurrentImageIndex(0);
     }
@@ -120,61 +119,51 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
         <CloseIcon />
       </IconButton>
       <DialogContent
-        style={{ display: "flex", alignItems: "center", minHeight: "70vh" }}
+        style={{ display: "flex" }}
       >
-        <div style={{ display: "flex", width: "100%" }}>
-          {currentImageIndex < listPreviewImages.length &&
-          listPreviewImages[currentImageIndex] !== "" ? (
-            <img
-              src={listPreviewImages[currentImageIndex]}
-              alt="Preview"
+        {currentImageIndex < listPreviewImages.length &&
+        listPreviewImages[currentImageIndex] !== "" ? (
+          <img
+            src={listPreviewImages[currentImageIndex]}
+            style={{ flex: "0 0 50%" }}
+            alt="Preview"
+          />
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              flex: "0 0 50%",
+              backgroundColor: "black",
+            }}
+          />
+        )}
+        <Stack direction="column" marginLeft={"10px"} width={"100%"}>
+          <Typography textAlign={'center'}>Hello World</Typography>
+          <Typography textAlign={'center'}>Hello World</Typography>
+          <Typography textAlign={'center'}>Hello World</Typography>
+          <Stack direction={"column"} spacing={2}>
+            <Button
               style={{
-                flex: "0 0 50%",
-                backgroundColor: "black",
-                height: 200,
+                backgroundColor: "green",
+                color: "white",
               }}
-            />
-          ) : (
-            <div
+              onClick={handleOnSyncClick}
+            >
+              Sync
+            </Button>
+            <Button
               style={{
-                flex: "0 0 50%",
-                backgroundColor: "black",
-                height: 200,
+                backgroundColor: "green",
+                color: "white",
               }}
-            />
-          )}
-          <div style={{ flex: "1", marginLeft: 20 }}>
-            <Stack direction="column" alignItems={"center"}>
-              <Typography>Hello World</Typography>
-              <Typography>Hello World</Typography>
-              <Typography>Hello World</Typography>
-              <Button
-                style={{
-                  backgroundColor: "green",
-                  color: "white",
-                  marginTop: "120%",
-                  width: "100%",
-                }}
-                onClick={handleOnSyncClick}
-              >
-                Sync
-              </Button>
-              <Button
-                style={{
-                  backgroundColor: "green",
-                  color: "white",
-                  marginTop: "120%",
-                  width: "100%",
-                }}
-                onClick={() => {
-                  setCurrentImageIndex(currentImageIndex + 1);
-                }}
-              >
-                Change
-              </Button>
-            </Stack>
-          </div>
-        </div>
+              onClick={() => {
+                setCurrentImageIndex(currentImageIndex + 1);
+              }}
+            >
+              Change
+            </Button>
+          </Stack>
+        </Stack>
       </DialogContent>
     </Dialog>
   );
