@@ -64,7 +64,7 @@ function App() {
         ))}
       </Grid>
     </Box>
-    {(selectedModel !== -1) && <ModalWindow open={(selectedModel !== -1)} handleClose={handleClose} modelId={selectedModel} modelName={selectedModelName} />}
+    {<ModalWindow open={(selectedModel !== -1)} handleClose={handleClose} modelId={selectedModel} modelName={selectedModelName} />}
     </>
   );
 }

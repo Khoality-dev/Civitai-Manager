@@ -9,13 +9,15 @@ import axios from "./axios";
 import convertImageBufferToUrl from "./utils";
 
 const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
-  const [currentModelVersionId, setCurrentModelVersionId] = useState(-1);
+  const [currentModelVersion, setCurrentModelVersion] = useState(null);
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [listPreviewImages, setListPreviewImages] = useState([]);
-  const [maxIndex, setMaxIndex] = useState(-1);
   const [listVersions, setListVersions] = useState([]);
 
   useEffect(() => {
+    setCurrentImageIndex(0);
+    setListPreviewImages([]);
     if (modelId !== -1) {
       axios
         .get("/model/versions", {
@@ -24,57 +26,28 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
           },
         })
         .then((response) => {
+          console.log(response.data);
           setListVersions(response.data["versions"]);
+          setCurrentModelVersion(response.data["versions"][0]);
         })
         .catch((error) => {
           console.error("Error fetching model IDs:", error);
         });
     }
-  }, []);
+  }, [open, modelId]);
 
   useEffect(() => {
-    console.log(listVersions);
-    if (listVersions.length > 0) {
-      setCurrentModelVersionId(listVersions[0]["id"]);
-      setCurrentImageIndex(0);
-    }
-  }, [listVersions]);
-
-  useEffect(() => {
-    if (currentModelVersionId < 0) {
-      return;
-    }
-    axios
-      .get("/model/version/preview-images/size", {
-        params: {
-          id: currentModelVersionId,
-        },
-      })
-      .then((response) => {
-        setMaxIndex(Number(response.data["size"]) - 1);
-      })
-      .catch((error) => {
-        console.error("Error fetching model IDs:", error);
-      });
-  }, [currentModelVersionId]);
-
-  useEffect(() => {
-    if (currentImageIndex >= maxIndex) {
-      setCurrentImageIndex(0);
-    }
-
     if (
-      currentModelVersionId < 0 ||
+      currentModelVersion === null ||
       (currentImageIndex < listPreviewImages.length &&
         listPreviewImages[currentImageIndex] !== "")
     ) {
       return;
     }
-
     axios
       .get("/model/version/preview-images", {
         params: {
-          id: currentModelVersionId,
+          id: currentModelVersion["id"],
           index: currentImageIndex,
         },
         responseType: "arraybuffer",
@@ -89,15 +62,22 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
         setListPreviewImages(newlistPreviewImages);
       })
       .catch((error) => {
-        console.error("Error fetching model IDs:", error);
+        const uint8Array = new Uint8Array(error.response.data);
+        const jsonString = new TextDecoder().decode(uint8Array);
+        const data = JSON.parse(jsonString);
+        if (data["error"] === "Index out of bound!") {
+          setCurrentImageIndex(0);  
+        } else {
+          console.error("Error fetching model IDs:", error);
+        }
       });
-  }, [currentImageIndex, maxIndex]);
+  }, [currentModelVersion, currentImageIndex, listVersions]);
 
   const handleOnSyncClick = () => {
     axios
       .get("/sync-model-version", {
         params: {
-          model_version_id: currentModelVersionId,
+          model_version_id: currentModelVersion["id"],
         },
       })
       .then((response) => {
@@ -118,9 +98,7 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
       >
         <CloseIcon />
       </IconButton>
-      <DialogContent
-        style={{ display: "flex" }}
-      >
+      <DialogContent style={{ display: "flex" }}>
         {currentImageIndex < listPreviewImages.length &&
         listPreviewImages[currentImageIndex] !== "" ? (
           <img
@@ -138,9 +116,9 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
           />
         )}
         <Stack direction="column" marginLeft={"10px"} width={"100%"}>
-          <Typography textAlign={'center'}>Hello World</Typography>
-          <Typography textAlign={'center'}>Hello World</Typography>
-          <Typography textAlign={'center'}>Hello World</Typography>
+          <Typography textAlign={"center"}>Hello World</Typography>
+          <Typography textAlign={"center"}>Hello World</Typography>
+          <Typography textAlign={"center"}>Hello World</Typography>
           <Stack direction={"column"} spacing={2}>
             <Button
               style={{

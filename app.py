@@ -53,7 +53,7 @@ def get_version_image():
     image_filenames = [filename for filename in os.listdir(directory) if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg")]
 
     if (index is not None and int(index) >= len(image_filenames)):
-        return jsonify({"error": "Some erros occurred!"}), 500
+        return jsonify({"error": "Index out of bound!"}), 500
     
     image_filename = random.choice(image_filenames) if index is None or int(index) == -1 else image_filenames[int(index)]
     return send_file(os.path.join(directory,image_filename))
@@ -104,7 +104,7 @@ def get_model_versions():
         return jsonify({"error": "Some erros occurred!"}), 500
 
     versions = [{"id": version.id, "name": version.name} for version in versions]
-    return jsonify({"versions": versions})
+    return jsonify({"versions": versions}), 200
 
 @app.route("/fetch-model")
 def fetch_model():
