@@ -18,15 +18,17 @@ class Model(Base):
 
 class Version(Base):
     __tablename__ = "versions"
-
     id = Column("id", Integer, primary_key=True)
     model_id = Column("model_id", Integer, ForeignKey(Model.id))
     version_id = Column("version_id", String(50))
     name = Column("name", String(100))
     type = Column("type", String(50))
     description = Column("description", String(), default="")
-    activation_words = Column("activation_words", String())
-    custom_activation_words = Column("custom_activation_words", String())
+    positive_prompts = Column("positive_prompts", String())
+    negative_prompts = Column("negative_prompts", String())
+    custom_positive_prompts = Column("custom_positive_prompts", String())
+    custom_negative_prompts = Column("custom_negative_prompts", String())
+    
     blob = Column("blob", String())
 
     model = relationship("Model", back_populates="versions")

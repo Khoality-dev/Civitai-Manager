@@ -11,13 +11,13 @@ import json
 from utils import calculate_sha256, sanitize_filename
 
 
-@app.route('/model/preview-images')
+@app.route("/model/preview-images")
 def get_model_image():
     id = request.args.get("id")
     index = request.args.get("number")
-    if (id is None):
+    if id is None:
         return jsonify({"error": "Some erros occurred!"}), 500
-    
+
     model_versions = db.session.query(Version).filter_by(model_id=id).all()
 
     # If there are no versions, return None
@@ -26,19 +26,30 @@ def get_model_image():
 
     model_version_id = model_versions[random.randint(0, len(model_versions) - 1)].id
     directory = f"images/{model_version_id}/model_previews"
-    image_filenames = [filename for filename in os.listdir(directory) if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg")]
-    
-    if (index is not None and int(index) >= len(image_filenames)):
-        return jsonify({"error": "Some erros occurred!"}), 500
-    
-    image_filename = random.choice(image_filenames) if index is None or int(index) == -1 else image_filenames[int(index)]
-    return send_file(os.path.join(directory,image_filename))
+    image_filenames = [
+        filename
+        for filename in os.listdir(directory)
+        if filename.endswith(".jpg")
+        or filename.endswith(".png")
+        or filename.endswith(".jpeg")
+    ]
 
-@app.route('/model/version/preview-images')
+    if index is not None and int(index) >= len(image_filenames):
+        return jsonify({"error": "Some erros occurred!"}), 500
+
+    image_filename = (
+        random.choice(image_filenames)
+        if index is None or int(index) == -1
+        else image_filenames[int(index)]
+    )
+    return send_file(os.path.join(directory, image_filename))
+
+
+@app.route("/model/version/preview-images")
 def get_version_image():
     id = request.args.get("id")
     index = request.args.get("index")
-    if (id is None):
+    if id is None:
         return jsonify({"error": "Some erros occurred!"}), 500
     id = int(id)
     model_version = db.session.query(Version).filter_by(id=id).first()
@@ -50,18 +61,29 @@ def get_version_image():
     model_version_id = model_version.id
 
     directory = f"images/{model_version_id}/model_previews"
-    image_filenames = [filename for filename in os.listdir(directory) if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg")]
+    image_filenames = [
+        filename
+        for filename in os.listdir(directory)
+        if filename.endswith(".jpg")
+        or filename.endswith(".png")
+        or filename.endswith(".jpeg")
+    ]
 
-    if (index is not None and int(index) >= len(image_filenames)):
+    if index is not None and int(index) >= len(image_filenames):
         return jsonify({"error": "Index out of bound!"}), 500
-    
-    image_filename = random.choice(image_filenames) if index is None or int(index) == -1 else image_filenames[int(index)]
-    return send_file(os.path.join(directory,image_filename))
 
-@app.route('/model/version/preview-images/size')
+    image_filename = (
+        random.choice(image_filenames)
+        if index is None or int(index) == -1
+        else image_filenames[int(index)]
+    )
+    return send_file(os.path.join(directory, image_filename))
+
+
+@app.route("/model/version/preview-images/size")
 def get_version_image_size():
     id = request.args.get("id")
-    if (id is None):
+    if id is None:
         return jsonify({"error": "Some erros occurred!"}), 500
     id = int(id)
     model_version = db.session.query(Version).filter_by(id=id).first()
@@ -73,7 +95,13 @@ def get_version_image_size():
     model_version_id = model_version.id
 
     directory = f"images/{model_version_id}/model_previews"
-    image_filenames = [filename for filename in os.listdir(directory) if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg")]
+    image_filenames = [
+        filename
+        for filename in os.listdir(directory)
+        if filename.endswith(".jpg")
+        or filename.endswith(".png")
+        or filename.endswith(".jpeg")
+    ]
 
     return jsonify({"size": len(image_filenames)})
 
@@ -81,30 +109,62 @@ def get_version_image_size():
 @app.route("/models")
 def get_models():
     id = request.args.get("id")
-    
+
     models = None
-    if (id is None):
+    if id is None:
         models = db.session.query(Model).all()
     else:
         models = db.session.query(Model).filter_by(id=id)
 
-    model_list = [{"id": model.id, "name": model.name, "type": model.type} for model in models]
+    model_list = [
+        {
+            "id": model.id,
+            "name": model.name,
+            "type": model.type,
+            "url": model.request_url,
+        }
+        for model in models
+    ]
 
     return jsonify({"models": model_list})
+
 
 @app.route("/model/versions")
 def get_model_versions():
     id = request.args.get("id")
-    if (id is None):
+    if id is None:
         return jsonify({"error": "Some erros occurred!"}), 500
-    
+
     versions = db.session.query(Version).filter_by(model_id=id).all()
 
-    if (len(versions) == 0):
+    if len(versions) == 0:
         return jsonify({"error": "Some erros occurred!"}), 500
 
-    versions = [{"id": version.id, "name": version.name} for version in versions]
+    versions = [
+        {
+            "id": version.id,
+            "name": version.name,
+            "positive_prompts": version.positive_prompts,
+            "negative_prompts": version.negative_prompts,
+        }
+        for version in versions
+    ]
     return jsonify({"versions": versions}), 200
+
+
+@app.route("/fetch-all-models")
+def fetch_all_models():
+    
+    models = db.session.query(Model).all()
+    if (models is None):
+        return
+    
+    platform = Civitai(app_configs.CIVITAI_API_KEY)
+
+    for model in models:
+        result = platform.fetch_model_info({"model_id": json.loads(model.blob)["id"]})
+
+    return jsonify({"message": "Success"}), 200
 
 @app.route("/fetch-model")
 def fetch_model():

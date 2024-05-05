@@ -1,11 +1,7 @@
-import { Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import React, { useState } from "react";
-import InputAdornment from "@mui/material/InputAdornment";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 
 const CodeSnippet = ({ label, content }) => {
@@ -19,7 +15,7 @@ const CodeSnippet = ({ label, content }) => {
         contentEditable={"false"}
         multiline
         spellCheck="false"
-        inputProps={{ maxRows: 20 }}
+        inputProps={{ maxRows: 10 }}
         onMouseEnter={() => {
           setIsHovered(true);
         }}

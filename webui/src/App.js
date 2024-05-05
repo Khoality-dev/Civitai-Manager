@@ -24,17 +24,14 @@ function App() {
       });
   }, []); // Empty dependency array ensures the effect runs only once, like componentDidMount
 
-  const [selectedModel, setSelectedModel] = useState(-1);
-  const [selectedModelName, setSelectedModelName] = useState("");
+  const [selectedModel, setSelectedModel] = useState(null);
 
   const handleClick = (modelId) => {
-    setSelectedModel(modelId);
-    setSelectedModelName(models.filter((model) => model["id"] === modelId)[0]["name"]);
+    setSelectedModel(models.filter((model) => model["id"] === modelId)[0]);
   };
 
   const handleClose = () => {
-    setSelectedModel(-1);
-    setSelectedModelName("");
+    setSelectedModel(null);
   };
 
   return (
@@ -64,7 +61,7 @@ function App() {
         ))}
       </Grid>
     </Box>
-    {<ModalWindow open={(selectedModel !== -1)} handleClose={handleClose} modelId={selectedModel} modelName={selectedModelName} />}
+    {<ModalWindow open={(selectedModel !== null)} handleClose={handleClose} model={selectedModel} />}
     </>
   );
 }

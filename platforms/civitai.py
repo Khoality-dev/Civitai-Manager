@@ -17,9 +17,10 @@ class Civitai(Platform):
         if ("model_id" not in params):
             return None
         endpoint = self.base_url + "/models"
-        request = endpoint + "/{}".format(params["model_id"]) + "?token={}".format(self.api_key)
+        request = endpoint + "/{}".format(params["model_id"]) 
+        request_with_token = request  + "?token={}".format(self.api_key)
 
-        response = requests.get(request)
+        response = requests.get(request_with_token)
 
         if response.status_code == 200:
             model_json = response.json()
@@ -48,8 +49,10 @@ class Civitai(Platform):
                     "version_id": str(child["id"]),
                     "type":model_json["type"],
                     "description": model_json["description"],
-                    "activation_words": json.dumps({"prompts": child["trainedWords"] if "trainedWords" in child else []}),
-                    "custom_activation_words":"",
+                    "positive_prompts": json.dumps({"prompts": child["trainedWords"] if "trainedWords" in child else []}),
+                    "negative_prompts": json.dumps({"prompts": []}),
+                    "custom_positive_prompts":"",
+                    "custom_negative_prompts":"",
                     "blob": json.dumps(child)
                 }
                 version = Version(**child_params)

@@ -18,7 +18,7 @@ import InputLabel from "@mui/material/InputLabel";
 import convertImageBufferToUrl from "./utils";
 import CodeSnippet from "./CodeSnippet";
 
-const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
+const ModalWindow = ({ open, handleClose, model }) => {
   const [currentModelVersion, setCurrentModelVersion] = useState(null);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -26,11 +26,11 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
   const [listVersions, setListVersions] = useState([]);
 
   useEffect(() => {
-    if (modelId !== -1) {
+    if (model !== null) {
       axios
         .get("/model/versions", {
           params: {
-            id: modelId,
+            id: model.id,
           },
         })
         .then((response) => {
@@ -41,7 +41,7 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
           console.error("Error fetching model IDs:", error);
         });
     }
-  }, [open, modelId]);
+  }, [open, model]);
 
   useEffect(() => {
     setCurrentImageIndex(0);
@@ -101,18 +101,20 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
   };
 
   const handleOnVersionChange = (versionName) => {
-    console.log(versionName);
     if (version !== "Unknown") {
-      console.log(versionName);
       setCurrentModelVersion(
         listVersions.filter((version) => version["name"] === versionName)[0]
       );
     }
   };
 
-  return (
+  useEffect(()=>{
+    console.log(currentModelVersion);
+  },[currentModelVersion])
+
+  return ( model !== null &&
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-      <DialogTitle>{modelName}</DialogTitle>
+      <DialogTitle>{model.name}</DialogTitle>
       <IconButton
         aria-label="close"
         onClick={handleClose}
@@ -154,16 +156,23 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
                   </MenuItem>
                 ))}
               </Select>
+              {
+                JSON.parse(currentModelVersion.positive_prompts)["prompts"].map((positive_prompt) => (<CodeSnippet
+                label={"Positive Prompt"}
+                content={positive_prompt}
+              />))
+              }
+              
+              <CodeSnippet
+                label={"Negative Prompt"}
+                content={"Whatever negates this!"}
+              />
+              <CodeSnippet
+                label={"Url"}
+                content={model.url}
+              />
             </>
           )}
-          <CodeSnippet
-            label={"Prompt"}
-            content={"Whatever triggers this!"}
-          ></CodeSnippet>
-          <CodeSnippet
-            label={"Negative Prompt"}
-            content={"Whatever negates this!"}
-          ></CodeSnippet>
           <Stack direction={"column"} spacing={2}>
             <Button
               style={{
