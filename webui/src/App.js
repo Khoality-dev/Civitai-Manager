@@ -25,7 +25,7 @@ function App() {
       .catch((error) => {
         console.error("Error fetching model IDs:", error);
       });
-  }, []); // Empty dependency array ensures the effect runs only once, like componentDidMount
+  }, []); 
 
   const [selectedModel, setSelectedModel] = useState(null);
 
@@ -100,6 +100,7 @@ function App() {
           open={selectedModel !== null}
           handleClose={handleClose}
           model={selectedModel}
+          setModel={setSelectedModel}
         />
       }
     </>

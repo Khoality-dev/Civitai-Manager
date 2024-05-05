@@ -1,8 +1,8 @@
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import Typography from "@mui/material/Typography";
-import FormControl from "@mui/material/FormControl";
+import ConfirmationDialog from "./ConfirmationDialog";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   IconButton,
   Stack,
@@ -18,12 +18,34 @@ import InputLabel from "@mui/material/InputLabel";
 import convertImageBufferToUrl from "./utils";
 import CodeSnippet from "./CodeSnippet";
 
-const ModalWindow = ({ open, handleClose, model }) => {
+const ModalWindow = ({ open, handleClose, model, setModel }) => {
   const [currentModelVersion, setCurrentModelVersion] = useState(null);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [listPreviewImages, setListPreviewImages] = useState([]);
   const [listVersions, setListVersions] = useState([]);
+
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const handleDelete = () => {
+    if (model !== null) {
+      axios
+        .get("/delete-model", {
+          params: {
+            id: model.id,
+          },
+        })
+        .then((response) => {
+          setModel(null);
+          console.log("Done!");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+
+    setDeleteDialogOpen(false);
+  };
 
   useEffect(() => {
     if (model !== null) {
@@ -108,95 +130,111 @@ const ModalWindow = ({ open, handleClose, model }) => {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(currentModelVersion);
-  },[currentModelVersion])
+  }, [currentModelVersion]);
 
-  return ( model !== null &&
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
-      <DialogTitle>{model.name}</DialogTitle>
-      <IconButton
-        aria-label="close"
-        onClick={handleClose}
-        style={{ position: "absolute", right: 10, top: 10 }}
-      >
-        <CloseIcon />
-      </IconButton>
-      <DialogContent style={{ display: "flex" }}>
-        {currentImageIndex < listPreviewImages.length &&
-        listPreviewImages[currentImageIndex] !== "" ? (
-          <img
-            src={listPreviewImages[currentImageIndex]}
-            style={{ flex: "0 0 50%" }}
-            alt="Preview"
-          />
-        ) : (
-          <div
-            style={{
-              flex: "0 0 50%",
-              backgroundColor: "white",
-            }}
-          />
-        )}
-        <Stack direction="column" marginLeft={"10px"} width={"100%"}>
-          {currentModelVersion !== null && (
-            <>
-              <InputLabel id="version-label">Version</InputLabel>
-              <Select
-                labelId="version-label"
-                value={currentModelVersion.name} // Assuming "name" is the property you want to use as the value
-                onChange={(event) => {
-                  handleOnVersionChange(event.target.value);
-                }}
-              >
-                {listVersions.map((version) => (
-                  <MenuItem key={version.name} value={version.name}>
-                    {version.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              {
-                JSON.parse(currentModelVersion.positive_prompts)["prompts"].map((positive_prompt) => (<CodeSnippet
-                label={"Positive Prompt"}
-                content={positive_prompt}
-              />))
-              }
-              
-              <CodeSnippet
-                label={"Negative Prompt"}
-                content={"Whatever negates this!"}
-              />
-              <CodeSnippet
-                label={"URL"}
-                content={model.url}
-              />
-            </>
-          )}
-          <Stack direction={"column"} spacing={2}>
-            <Button
-              style={{
-                backgroundColor: "green",
-                color: "white",
-              }}
-              onClick={handleOnSyncClick}
-            >
-              Sync
-            </Button>
-            <Button
-              style={{
-                backgroundColor: "green",
-                color: "white",
-              }}
+  return (
+    model !== null && (
+      <>
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
+          <DialogTitle>{model.name}</DialogTitle>
+          <Box style={{ position: "absolute", right: 10, top: 10 }}>
+            <IconButton
+              aria-label="delete"
               onClick={() => {
-                setCurrentImageIndex(currentImageIndex + 1);
+                setDeleteDialogOpen(true);
               }}
             >
-              Change
-            </Button>
-          </Stack>
-        </Stack>
-      </DialogContent>
-    </Dialog>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton aria-label="close" onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <DialogContent style={{ display: "flex" }}>
+            {currentImageIndex < listPreviewImages.length &&
+            listPreviewImages[currentImageIndex] !== "" ? (
+              <img
+                src={listPreviewImages[currentImageIndex]}
+                style={{ flex: "0 0 50%" }}
+                alt="Preview"
+              />
+            ) : (
+              <div
+                style={{
+                  flex: "0 0 50%",
+                  backgroundColor: "white",
+                }}
+              />
+            )}
+            <Stack direction="column" marginLeft={"10px"} width={"100%"}>
+              {currentModelVersion !== null && (
+                <>
+                  <InputLabel id="version-label">Version</InputLabel>
+                  <Select
+                    labelId="version-label"
+                    value={currentModelVersion.name} // Assuming "name" is the property you want to use as the value
+                    onChange={(event) => {
+                      handleOnVersionChange(event.target.value);
+                    }}
+                  >
+                    {listVersions.map((version) => (
+                      <MenuItem key={version.name} value={version.name}>
+                        {version.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {JSON.parse(currentModelVersion.positive_prompts)[
+                    "prompts"
+                  ].map((positive_prompt) => (
+                    <CodeSnippet
+                      label={"Positive Prompt"}
+                      content={positive_prompt}
+                    />
+                  ))}
+
+                  <CodeSnippet
+                    label={"Negative Prompt"}
+                    content={"Whatever negates this!"}
+                  />
+                  <CodeSnippet label={"URL"} content={model.url} />
+                </>
+              )}
+              <Stack direction={"column"} spacing={2}>
+                <Button
+                  style={{
+                    backgroundColor: "green",
+                    color: "white",
+                  }}
+                  onClick={handleOnSyncClick}
+                >
+                  Sync
+                </Button>
+                <Button
+                  style={{
+                    backgroundColor: "green",
+                    color: "white",
+                  }}
+                  onClick={() => {
+                    setCurrentImageIndex(currentImageIndex + 1);
+                  }}
+                >
+                  Change
+                </Button>
+              </Stack>
+            </Stack>
+          </DialogContent>
+        </Dialog>
+        <ConfirmationDialog
+          open={isDeleteDialogOpen}
+          onClose={() => setDeleteDialogOpen(false)}
+          onConfirm={handleDelete}
+          title="Delete Confirmation"
+          content="Are you sure you want to delete?"
+        />
+      </>
+    )
   );
 };
 

@@ -7,6 +7,7 @@ from platforms.civitai import Civitai
 from tqdm import tqdm
 import app_configs
 import json
+import shutil
 
 from utils import calculate_sha256, sanitize_filename
 
@@ -154,17 +155,18 @@ def get_model_versions():
 
 @app.route("/fetch-all-models")
 def fetch_all_models():
-    
+
     models = db.session.query(Model).all()
-    if (models is None):
+    if models is None:
         return
-    
+
     platform = Civitai(app_configs.CIVITAI_API_KEY)
 
     for model in models:
         result = platform.fetch_model_info({"model_id": json.loads(model.blob)["id"]})
 
     return jsonify({"message": "Success"}), 200
+
 
 @app.route("/fetch-model")
 def fetch_model():
@@ -180,6 +182,24 @@ def fetch_model():
             return model, 200
     else:
         return "Error: Missing model_id parameter"
+
+
+@app.route("/delete-model")
+def delete_model():
+    id = request.args.get("id")
+
+    if id is not None:
+        versions = db.session.query(Version).filter(Version.model_id == id).all()
+        for version in versions:
+            shutil.rmtree(os.path.join(app_configs.IMAGES_DIRECTORY, str(version.id)),ignore_errors=True)
+            shutil.rmtree(
+                os.path.join(app_configs.MODELS_DIRECTORY, sanitize_filename(version.model.name)),ignore_errors=True
+            )
+        db.session.query(Version).filter(Version.model_id == id).delete()
+        db.session.query(Model).filter(Model.id == id).delete()
+        db.session.commit()
+
+    return jsonify({"message": "Success!"}), 200
 
 
 @app.route("/sync-model-version")
@@ -250,4 +270,4 @@ def setup():
 
 if __name__ == "__main__":
     setup()
-    app.run(ssl_context=('cert.pem', 'key.pem'),debug=True)
+    app.run(ssl_context=("cert.pem", "key.pem"), debug=True)

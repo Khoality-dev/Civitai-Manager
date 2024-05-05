@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "./axios";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
-import { CardActionArea, CardContent } from "@mui/material";
+import { Button, CardActionArea, CardContent, IconButton } from "@mui/material";
 import Box from "@mui/material/Box";
 import { Grow } from "@mui/material";
 import Typography from "@mui/material/Typography";
@@ -30,7 +30,6 @@ function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
 
   useEffect(() => {
     const timeoutFunc = () => {
-
       retrieveNewImage();
 
       const randomDelay = Math.random() * 100000 + 50000;
@@ -51,7 +50,7 @@ function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
   };
   const expandFactor = 1.05;
   return (
-    <Grow in={imageSrc !== ""}>
+    <Grow in={imageSrc && imageSrc !== ""}>
       <Card
         sx={{
           maxWidth: cardStandardSize[1] * (showDetails ? expandFactor : 1),
@@ -61,7 +60,9 @@ function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
         <CardActionArea
           onMouseEnter={handleOnMouseEnter}
           onMouseLeave={handleOnMouseLeave}
-          onMouseDown={ () => {onClickHandler(model_id)}}
+          onMouseDown={() => {
+            onClickHandler(model_id);
+          }}
         >
           <CardMedia
             component="img"
