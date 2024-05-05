@@ -2,7 +2,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Typography from "@mui/material/Typography";
-import FormControl from '@mui/material/FormControl';
+import FormControl from "@mui/material/FormControl";
 import {
   IconButton,
   Stack,
@@ -14,8 +14,9 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState, version } from "react";
 import axios from "./axios";
-import InputLabel from '@mui/material/InputLabel';
+import InputLabel from "@mui/material/InputLabel";
 import convertImageBufferToUrl from "./utils";
+import CodeSnippet from "./CodeSnippet";
 
 const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
   const [currentModelVersion, setCurrentModelVersion] = useState(null);
@@ -138,28 +139,31 @@ const ModalWindow = ({ open, handleClose, modelId, modelName }) => {
         )}
         <Stack direction="column" marginLeft={"10px"} width={"100%"}>
           {currentModelVersion !== null && (
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
-          <InputLabel id="version-label">Version</InputLabel>
-          <Select
-            label="Version"
-            labelId="version-label"
-            value={currentModelVersion.name} // Assuming "name" is the property you want to use as the value
-            onChange={(event) => {
-              handleOnVersionChange(event.target.value);
-            }}
-          >
-            {listVersions.map((version) => (
-              <MenuItem key={version.name} value={version.name}>
-                {version.name}
-              </MenuItem>
-            ))}
-          </Select>
-          </FormControl>
-
+            <>
+              <InputLabel id="version-label">Version</InputLabel>
+              <Select
+                labelId="version-label"
+                value={currentModelVersion.name} // Assuming "name" is the property you want to use as the value
+                onChange={(event) => {
+                  handleOnVersionChange(event.target.value);
+                }}
+              >
+                {listVersions.map((version) => (
+                  <MenuItem key={version.name} value={version.name}>
+                    {version.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </>
           )}
-          <Typography textAlign={"center"}>Hello World</Typography>
-          <Typography textAlign={"center"}>Hello World</Typography>
-          <Typography textAlign={"center"}>Hello World</Typography>
+          <CodeSnippet
+            label={"Prompt"}
+            content={"Whatever triggers this!"}
+          ></CodeSnippet>
+          <CodeSnippet
+            label={"Negative Prompt"}
+            content={"Whatever negates this!"}
+          ></CodeSnippet>
           <Stack direction={"column"} spacing={2}>
             <Button
               style={{
