@@ -20,7 +20,7 @@ import CodeSnippet from "./CodeSnippet";
 
 const ModalWindow = ({ open, handleClose, model }) => {
   const [currentModelVersion, setCurrentModelVersion] = useState(null);
-
+  
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [listPreviewImages, setListPreviewImages] = useState([]);
   const [listVersions, setListVersions] = useState([]);
@@ -168,7 +168,7 @@ const ModalWindow = ({ open, handleClose, model }) => {
                 content={"Whatever negates this!"}
               />
               <CodeSnippet
-                label={"Url"}
+                label={"URL"}
                 content={model.url}
               />
             </>
