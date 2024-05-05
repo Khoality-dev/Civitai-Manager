@@ -20,7 +20,7 @@ import CodeSnippet from "./CodeSnippet";
 
 const ModalWindow = ({ open, handleClose, model }) => {
   const [currentModelVersion, setCurrentModelVersion] = useState(null);
-  
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [listPreviewImages, setListPreviewImages] = useState([]);
   const [listVersions, setListVersions] = useState([]);
@@ -113,7 +113,7 @@ const ModalWindow = ({ open, handleClose, model }) => {
   },[currentModelVersion])
 
   return ( model !== null &&
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
       <DialogTitle>{model.name}</DialogTitle>
       <IconButton
         aria-label="close"
@@ -133,9 +133,8 @@ const ModalWindow = ({ open, handleClose, model }) => {
         ) : (
           <div
             style={{
-              display: "flex",
               flex: "0 0 50%",
-              backgroundColor: "black",
+              backgroundColor: "white",
             }}
           />
         )}
