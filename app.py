@@ -172,7 +172,7 @@ def fetch_all_models():
 def fetch_model():
     model_id = request.args.get("model_id")
 
-    if model_id:
+    if model_id is not None and model_id != "undefined":
         platform = Civitai(app_configs.CIVITAI_API_KEY)
 
         model = platform.fetch_model_info({"model_id": model_id})
@@ -181,7 +181,7 @@ def fetch_model():
         else:
             return model, 200
     else:
-        return "Error: Missing model_id parameter"
+        return jsonify({"error": "Missing model_id parameter!"}), 500
 
 
 @app.route("/delete-model")

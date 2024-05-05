@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Civitai Manager Extension</title>
+  <style>
+    button#sendRequest {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+      font-size: 30px; 
+      width: 150px; 
+      height: 50px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    button#sendRequest:hover {
+      background-color: #0056b3;
+    }
+
+    button#sendRequest:active {
+      transform: scale(0.95);
+    }
+    button#sendRequest.loading {
+      background-color: #ccc;
+      color: #666;
+      cursor: wait;
+    }
+  </style>
+</head>
+<body>
+  <button id="sendRequest" style="border: 1px; background-color: lightskyblue; color:white; border-radius: 4px;">Sync</button>
+  <script src="popup.js"></script>
+</body>
+</html>
