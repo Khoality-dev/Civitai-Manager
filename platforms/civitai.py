@@ -104,15 +104,20 @@ class Civitai(Platform):
         
         url = url + ("?" if "?" not in url else "&") + "token={}".format(self.api_key)
 
-        response = requests.get(url, stream=True)
+        headers = {}
+        if os.path.isfile(destination_path):
+            file_size = os.path.getsize(destination_path)
+            headers['Range'] = f"bytes={file_size}-"
 
-        if response.status_code == 200:
+        response = requests.get(url, headers=headers, stream=True)
+
+        if response.status_code == 200 or response.status_code == 206:
             total_size = int(response.headers.get('content-length', 0))
             progress_bar = tqdm(total=total_size, unit='B', unit_scale=True) if progress_bar else None
-            with open(destination_path, "wb") as file:
+            with open(destination_path, "ab") as file:
 
                 if progress_bar is None:
-                    for chunk in  response.iter_content(chunk_size=1024):
+                    for chunk in response.iter_content(chunk_size=1024):
                         file.write(chunk)
                 else:
                     for chunk in  response.iter_content(chunk_size=1024):
