@@ -191,9 +191,15 @@ def delete_model():
     if id is not None:
         versions = db.session.query(Version).filter(Version.model_id == id).all()
         for version in versions:
-            shutil.rmtree(os.path.join(app_configs.IMAGES_DIRECTORY, str(version.id)),ignore_errors=True)
             shutil.rmtree(
-                os.path.join(app_configs.MODELS_DIRECTORY, sanitize_filename(version.model.name)),ignore_errors=True
+                os.path.join(app_configs.IMAGES_DIRECTORY, str(version.id)),
+                ignore_errors=True,
+            )
+            shutil.rmtree(
+                os.path.join(
+                    app_configs.MODELS_DIRECTORY, sanitize_filename(version.model.name)
+                ),
+                ignore_errors=True,
             )
         db.session.query(Version).filter(Version.model_id == id).delete()
         db.session.query(Model).filter(Model.id == id).delete()
@@ -234,15 +240,26 @@ def sync_model():
             destination_paths.append(file_path)
             urls.append(file["downloadUrl"])
         else:
-            print("Calculating checksum {}...".format(filename))
-            calculated_checksum = calculate_sha256(file_path)
-            print("Done!")
-            if (
-                calculated_checksum is not None
-                and file["hashes"]["SHA256"].lower() != calculated_checksum.lower()
-            ):
+
+            # print("Calculating checksum {}...".format(filename))
+            # calculated_checksum = calculate_sha256(file_path)
+            # print("Done!")
+            # if (
+            #     calculated_checksum is not None
+            #     and file["hashes"]["SHA256"].lower() != calculated_checksum.lower()
+            # ):
+            #     destination_paths.append(file_path)
+            #     urls.append(file["downloadUrl"])
+
+            print("Checking file size {}...".format(filename))
+            calculated_file_size = os.path.getsize(file_path)/1024.
+            if (calculated_file_size) != file["sizeKB"]:
+                if (calculated_file_size > file["sizeKB"]):
+                    os.remove(file_path)
                 destination_paths.append(file_path)
                 urls.append(file["downloadUrl"])
+            else:
+                print("Skip {}...".format(filename))
 
     success = True
     for url, destination_path in zip(urls, destination_paths):
