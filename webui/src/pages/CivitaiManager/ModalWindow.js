@@ -13,9 +13,9 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState, version } from "react";
-import axios from "./axios";
+import axios from "../../axios";
 import InputLabel from "@mui/material/InputLabel";
-import convertImageBufferToUrl from "./utils";
+import convertImageBufferToUrl from "../../utils/utils";
 import CodeSnippet from "./CodeSnippet";
 
 const ModalWindow = ({ open, handleClose, model, setModel }) => {

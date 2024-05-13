@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import axios from "./axios";
+import axios from "../../axios";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import { Button, CardActionArea, CardContent, IconButton } from "@mui/material";
 import Box from "@mui/material/Box";
 import { Grow } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import convertImageBufferToUrl from "./utils";
+import convertImageBufferToUrl from "../../utils/utils";
 
 function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
   const [imageSrc, setImageSrc] = useState("");
