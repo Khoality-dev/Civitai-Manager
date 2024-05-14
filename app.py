@@ -9,7 +9,7 @@ import app_configs
 import json
 import shutil
 
-from utils import calculate_sha256, sanitize_filename
+from utils import calculate_sha256, sanitize_filename, serialize_image
 
 
 @app.route("/model/preview-images")
@@ -208,6 +208,29 @@ def delete_model():
     return jsonify({"message": "Success!"}), 200
 
 
+@app.route("/file-browser")
+def file_browser():
+    path = request.args.get("path")
+
+    path = os.path.normpath(path)
+
+    if (path is None or not os.path.isdir(path) or not path.startswith(app_configs.ALBUM_DIRECTORY)):
+        return  jsonify({"error": "Invalid path!"}), 500
+    
+    files = {}
+    for file in os.listdir(path):
+        current_path = os.path.join(app_configs.ALBUM_DIRECTORY, file)
+        if (os.path.isdir(current_path)):
+            files[file] = {}
+        elif (os.path.isfile(current_path)):
+            try:
+                base64 = serialize_image(current_path)
+                files[file] = {"base64": base64}
+            except:
+                print("Skipping {}...".format(current_path))
+    
+    return jsonify({"files": files}), 200
+
 @app.route("/sync-model-version")
 def sync_model():
     model_version_id = request.args.get("model_version_id")
@@ -283,6 +306,10 @@ def setup():
     if app_configs.IMAGES_DIRECTORY is None:
         app_configs.IMAGES_DIRECTORY = "images"
         os.makedirs(app_configs.IMAGES_DIRECTORY, exist_ok=True)
+    
+    if app_configs.ALBUM_DIRECTORY is None:
+        app_configs.ALBUM_DIRECTORY = "album"
+        os.makedirs(app_configs.ALBUM_DIRECTORY, exist_ok=True)
 
 
 if __name__ == "__main__":
