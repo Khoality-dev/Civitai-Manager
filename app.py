@@ -207,6 +207,7 @@ def delete_model():
 
     return jsonify({"message": "Success!"}), 200
 
+@app.route("/")
 
 @app.route("/file-browser")
 def file_browser():
@@ -231,8 +232,8 @@ def file_browser():
     
     return jsonify({"files": files}), 200
 
-@app.route("/sync-model-version")
-def sync_model():
+@app.route("/download-model-version")
+def download_model_version():
     model_version_id = request.args.get("model_version_id")
 
     version = db.session.query(Version).filter_by(id=model_version_id).first()
