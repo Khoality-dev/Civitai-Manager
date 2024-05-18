@@ -101,7 +101,7 @@ class Civitai(Platform):
                     .first()
                 )
                 json_blob = json.loads(version.blob)
-                preview_images = json_blob["images"]
+                preview_images = json_blob["images"] if "images" in json_blob else []
                 urls = [image["url"] for image in preview_images]
                 destination_filenames = [
                     url.split("/")[4] + "." + url.split(".")[-1] for url in urls
