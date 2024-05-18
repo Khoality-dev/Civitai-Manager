@@ -4,6 +4,7 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import { Button, CardActionArea, CardContent, IconButton } from "@mui/material";
 import Box from "@mui/material/Box";
+import { useInView } from "react-intersection-observer";
 import { Grow } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import convertImageBufferToUrl from "../../utils/utils";
@@ -14,19 +15,26 @@ function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
   const cardStandardSize = [380, 320];
 
   const retrieveNewImage = () => {
-    axios
-      .get("/model/preview-images", {
-        params: {
-          id: model_id,
-        },
-        responseType: "arraybuffer",
-      })
-      .then((response) => {
-        const url = convertImageBufferToUrl(response.data);
-        setImageSrc(url);
-      })
-      .catch((error) => console.error("Error fetching image:", error));
+    if (inView) {
+      axios
+        .get("/model/preview-images", {
+          params: {
+            id: model_id,
+          },
+          responseType: "arraybuffer",
+        })
+        .then((response) => {
+          const url = convertImageBufferToUrl(response.data);
+          setImageSrc(url);
+        })
+        .catch((error) => console.error("Error fetching image:", error));
+    }
   };
+
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
 
   useEffect(() => {
     const timeoutFunc = () => {
@@ -34,13 +42,16 @@ function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
 
       const randomDelay = Math.random() * 100000 + 50000;
 
-      setTimeout(timeoutFunc, randomDelay);
+      if (inView) {
+        setTimeout(timeoutFunc, randomDelay);
+      }
     };
-    const initialDelay = 0;
-    setTimeout(timeoutFunc, initialDelay);
 
-    return () => clearTimeout(timeoutFunc);
-  }, []);
+    if (inView) {
+      const initialDelay = 0;
+      setTimeout(timeoutFunc, initialDelay);
+    }
+  }, [inView]);
 
   const handleOnMouseEnter = () => {
     setShowDetails(true);
@@ -50,7 +61,7 @@ function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
   };
   const expandFactor = 1.05;
   return (
-    <Grow in={imageSrc && imageSrc !== ""}>
+    <Grow in={imageSrc && imageSrc !== ""} ref={ref}>
       <Card
         sx={{
           maxWidth: cardStandardSize[1] * (showDetails ? expandFactor : 1),

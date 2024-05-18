@@ -8,8 +8,8 @@ from tqdm import tqdm
 import app_configs
 import json
 import shutil
-
-from utils import calculate_sha256, sanitize_filename, serialize_image
+from sqlalchemy.sql import text
+from utils import calculate_sha256, list_dir, sanitize_filename, serialize_image
 
 
 @app.route("/model/preview-images")
@@ -214,25 +214,60 @@ def file_browser():
 
     path = os.path.normpath(path)
 
-    if (path is None or not os.path.isdir(path) or not path.startswith(app_configs.ALBUM_DIRECTORY)):
-        return  jsonify({"error": "Invalid path!"}), 500
-    
+    if (
+        path is None
+        or not os.path.isdir(path)
+        or not path.startswith(app_configs.ALBUM_DIRECTORY)
+    ):
+        return jsonify({"error": "Invalid path!"}), 500
+
     files = {}
     for file in os.listdir(path):
         current_path = os.path.join(app_configs.ALBUM_DIRECTORY, file)
-        if (os.path.isdir(current_path)):
+        if os.path.isdir(current_path):
             files[file] = {}
-        elif (os.path.isfile(current_path)):
+        elif os.path.isfile(current_path):
             try:
                 base64 = serialize_image(current_path)
                 files[file] = {"base64": base64}
             except:
                 print("Skipping {}...".format(current_path))
-    
+
     return jsonify({"files": files}), 200
 
+
 @app.route("/sync-model-version")
-def sync_model():
+def sync_model_version():
+    for file in [*list_dir(os.path.join(app_configs.MODELS_DIRECTORY, "Lora")),*list_dir(os.path.join(app_configs.MODELS_DIRECTORY, "Stable-diffusion"))]:
+        if (
+            file.endswith(".png")
+            or file.endswith(".jpg")
+            or file.endswith(".json")
+            or file.endswith(".info")
+        ):
+            continue
+
+        checksum = calculate_sha256(file)
+
+        statement = "SELECT * FROM versions WHERE blob -> 'files' @> '[{{\"hashes\": {{\"SHA256\": \"{}\"}}}}]'".format(checksum)
+        query = text(statement)
+        version = db.session.execute(query).first()
+
+        # model does not exist, fetch it
+        if version is None:
+            civitai = Civitai(app_configs.CIVITAI_API_KEY)
+            
+            ret = civitai.fetch_model_info_by_hash(checksum)
+            if (ret is None):
+                print("Failed to retrieve model of {} from Civitai!".format(file))
+            else:
+                print("Fetched {}.".format(os.path.basename(file)))
+            
+    return jsonify({"message": "Success!"}), 200
+
+
+@app.route("/download-model-version")
+def download_model_version():
     model_version_id = request.args.get("model_version_id")
 
     version = db.session.query(Version).filter_by(id=model_version_id).first()
@@ -275,9 +310,9 @@ def sync_model():
             #     urls.append(file["downloadUrl"])
 
             print("Checking file size {}...".format(filename))
-            calculated_file_size = os.path.getsize(file_path)/1024.
+            calculated_file_size = os.path.getsize(file_path) / 1024.0
             if (calculated_file_size) != file["sizeKB"]:
-                if (calculated_file_size > file["sizeKB"]):
+                if calculated_file_size > file["sizeKB"]:
                     os.remove(file_path)
                 destination_paths.append(file_path)
                 urls.append(file["downloadUrl"])
@@ -301,15 +336,23 @@ def sync_model():
 def setup():
     if app_configs.MODELS_DIRECTORY is None:
         app_configs.MODELS_DIRECTORY = "models"
-        os.makedirs(app_configs.MODELS_DIRECTORY, exist_ok=True)
+
+    os.makedirs(app_configs.MODELS_DIRECTORY, exist_ok=True)
 
     if app_configs.IMAGES_DIRECTORY is None:
         app_configs.IMAGES_DIRECTORY = "images"
-        os.makedirs(app_configs.IMAGES_DIRECTORY, exist_ok=True)
-    
+
+    os.makedirs(app_configs.IMAGES_DIRECTORY, exist_ok=True)
+
     if app_configs.ALBUM_DIRECTORY is None:
         app_configs.ALBUM_DIRECTORY = "album"
-        os.makedirs(app_configs.ALBUM_DIRECTORY, exist_ok=True)
+
+    os.makedirs(app_configs.ALBUM_DIRECTORY, exist_ok=True)
+
+    if app_configs.BACKUP_MODELS_DIRECTORY is None:
+        app_configs.BACKUP_MODELS_DIRECTORY = "album"
+
+    os.makedirs(app_configs.BACKUP_MODELS_DIRECTORY, exist_ok=True)
 
 
 if __name__ == "__main__":
