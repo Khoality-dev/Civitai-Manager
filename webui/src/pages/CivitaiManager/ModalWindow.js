@@ -109,7 +109,7 @@ const ModalWindow = ({ open, handleClose, model, setModel }) => {
 
   const handleOnSyncClick = () => {
     axios
-      .get("/sync-model-version", {
+      .get("/download-model-version", {
         params: {
           model_version_id: currentModelVersion["id"],
         },
