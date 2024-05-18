@@ -51,3 +51,9 @@ def serialize_image(image):
     return encoded_image
 
 
+def list_dir(path):
+    result = []
+    for root, dirs, files in os.walk(path, topdown=True):
+        for file in files:
+            result.append(os.path.join(root, file))
+    return result
