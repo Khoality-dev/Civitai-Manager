@@ -2,9 +2,7 @@ import base64
 import hashlib
 import re
 import cv2
-import requests
 import os
-
 from tqdm import tqdm
 
 
@@ -57,3 +55,8 @@ def list_dir(path):
         for file in files:
             result.append(os.path.join(root, file))
     return result
+
+def generate_regex_pattern(input_string):
+    chars = input_string.split()
+    pattern = '.*'.join(chars)
+    return pattern

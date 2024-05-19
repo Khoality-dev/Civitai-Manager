@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
-import axios from "../../axios";
+import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
-import { Button, CardActionArea, CardContent, IconButton } from "@mui/material";
+import { CardActionArea } from "@mui/material";
 import Box from "@mui/material/Box";
 import { Grow } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import convertImageBufferToUrl from "../../utils/utils";
 
 function FileCard({ thumbnailImage, name, onClickHandler }) {
   const [showDetails, setShowDetails] = useState(false);

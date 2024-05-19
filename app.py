@@ -9,7 +9,13 @@ import app_configs
 import json
 import shutil
 from sqlalchemy.sql import text
-from utils import calculate_sha256, list_dir, sanitize_filename, serialize_image
+from utils import (
+    calculate_sha256,
+    generate_regex_pattern,
+    list_dir,
+    sanitize_filename,
+    serialize_image,
+)
 
 
 @app.route("/model/preview-images")
@@ -109,13 +115,23 @@ def get_version_image_size():
 
 @app.route("/models")
 def get_models():
-    id = request.args.get("id")
+    search = request.args.get("search")
 
     models = None
-    if id is None:
-        models = db.session.query(Model).all()
+    if search is not None:
+        statement = """
+            SELECT *
+            FROM models
+            WHERE name ~* \'{}\';
+        """.format(
+            generate_regex_pattern(search)
+        )
+        query = text(statement)
+        models = db.session.execute(query)
     else:
-        models = db.session.query(Model).filter_by(id=id)
+        models = db.session.query(Model)
+
+    models = models.all()
 
     model_list = [
         {
@@ -238,7 +254,10 @@ def file_browser():
 
 @app.route("/sync-model-version")
 def sync_model_version():
-    for file in [*list_dir(os.path.join(app_configs.MODELS_DIRECTORY, "Lora")),*list_dir(os.path.join(app_configs.MODELS_DIRECTORY, "Stable-diffusion"))]:
+    for file in [
+        *list_dir(os.path.join(app_configs.MODELS_DIRECTORY, "Lora")),
+        *list_dir(os.path.join(app_configs.MODELS_DIRECTORY, "Stable-diffusion")),
+    ]:
         if (
             file.endswith(".png")
             or file.endswith(".jpg")
@@ -249,20 +268,22 @@ def sync_model_version():
 
         checksum = calculate_sha256(file)
 
-        statement = "SELECT * FROM versions WHERE blob -> 'files' @> '[{{\"hashes\": {{\"SHA256\": \"{}\"}}}}]'".format(checksum)
+        statement = 'SELECT * FROM versions WHERE blob -> \'files\' @> \'[{{"hashes": {{"SHA256": "{}"}}}}]\''.format(
+            checksum
+        )
         query = text(statement)
         version = db.session.execute(query).first()
 
         # model does not exist, fetch it
         if version is None:
             civitai = Civitai(app_configs.CIVITAI_API_KEY)
-            
+
             ret = civitai.fetch_model_info_by_hash(checksum)
-            if (ret is None):
+            if ret is None:
                 print("Failed to retrieve model of {} from Civitai!".format(file))
             else:
                 print("Fetched {}.".format(os.path.basename(file)))
-            
+
     return jsonify({"message": "Success!"}), 200
 
 
