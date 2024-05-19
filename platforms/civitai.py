@@ -14,7 +14,7 @@ class Civitai(Platform):
         super().__init__(api_key=api_key)
         self.base_url = "https://civitai.com/api/v1"
 
-    def fetch_model_info_by_hash(self, hash):
+    def fetch_model_info_by_hash(self, hash, progress_bar=True):
         endpoint = self.base_url + "/model-versions/by-hash/{}".format(hash)
         request_with_token = endpoint + "?token={}".format(self.api_key)
 
@@ -22,12 +22,12 @@ class Civitai(Platform):
         if response.status_code == 200:
             version_json = response.json()
             model_id = version_json["modelId"]
-            self.fetch_model_info({"model_id": model_id})
+            self.fetch_model_info({"model_id": model_id}, progress_bar)
             return model_id
         else:
             return None
 
-    def fetch_model_info(self, params):
+    def fetch_model_info(self, params, progress_bar = True):
         if "model_id" not in params:
             return None
         endpoint = self.base_url + "/models"
@@ -45,7 +45,7 @@ class Civitai(Platform):
                 "type": model_json["type"],
                 "request_url": request,
                 "platform": "Civitai",
-                "blob": response.text,
+                "blob": json.loads(response.text),
             }
             model = Model(**model_params)
             existing_model = (
@@ -81,7 +81,7 @@ class Civitai(Platform):
                     "negative_prompts": json.dumps({"prompts": []}),
                     "custom_positive_prompts": "",
                     "custom_negative_prompts": "",
-                    "blob": json.dumps(child),
+                    "blob": child,
                 }
                 version = Version(**child_params)
                 existing_child = (
@@ -100,7 +100,7 @@ class Civitai(Platform):
                     .filter_by(version_id=child_params["version_id"])
                     .first()
                 )
-                json_blob = json.loads(version.blob)
+                json_blob = version.blob
                 preview_images = json_blob["images"] if "images" in json_blob else []
                 urls = [image["url"] for image in preview_images]
                 destination_filenames = [
@@ -120,7 +120,7 @@ class Civitai(Platform):
                 print("Downloading images:")
                 for url, destination_path in tqdm(zip(urls, destination_paths)):
                     success = success and self.download_file(
-                        url, destination_path, force=False, progress_bar=False
+                        url, destination_path, force=False, progress_bar=progress_bar
                     )
 
                 print("Done!")

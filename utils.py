@@ -6,20 +6,27 @@ import os
 from tqdm import tqdm
 
 
-def calculate_sha256(file_path):
+def calculate_sha256(file_path, progress_bar = True):
     if not(os.path.exists(file_path)):
         return None
     
     sha256_hash = hashlib.sha256()
     total_size = os.path.getsize(file_path)
-    progress_bar = tqdm(total=total_size, unit='B', unit_scale=True)
+
+    if (progress_bar):
+        progress_bar = tqdm(total=total_size, unit='B', unit_scale=True)
+    else:
+        progress_bar = None
+
     chuck_size = 8192
     with open(file_path, "rb") as file:
         chunk = file.read(chuck_size)
         while len(chunk) > 0:
             sha256_hash.update(chunk)
             chunk = file.read(chuck_size)
-            progress_bar.update(len(chunk))
+
+            if (progress_bar is not None):
+                progress_bar.update(len(chunk))
 
     sha256_digest = sha256_hash.hexdigest()
     return sha256_digest

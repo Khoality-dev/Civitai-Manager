@@ -254,10 +254,12 @@ def file_browser():
 
 @app.route("/sync-model-version")
 def sync_model_version():
-    for file in [
-        *list_dir(os.path.join(app_configs.MODELS_DIRECTORY, "Lora")),
-        *list_dir(os.path.join(app_configs.MODELS_DIRECTORY, "Stable-diffusion")),
-    ]:
+    for file in tqdm(
+        [
+            *list_dir(os.path.join(app_configs.MODELS_DIRECTORY, "Lora")),
+            *list_dir(os.path.join(app_configs.MODELS_DIRECTORY, "Stable-diffusion")),
+        ]
+    ):
         if (
             file.endswith(".png")
             or file.endswith(".jpg")
@@ -266,7 +268,7 @@ def sync_model_version():
         ):
             continue
 
-        checksum = calculate_sha256(file)
+        checksum = calculate_sha256(file, progress_bar=False).upper()
 
         statement = 'SELECT * FROM versions WHERE blob -> \'files\' @> \'[{{"hashes": {{"SHA256": "{}"}}}}]\''.format(
             checksum
@@ -278,7 +280,7 @@ def sync_model_version():
         if version is None:
             civitai = Civitai(app_configs.CIVITAI_API_KEY)
 
-            ret = civitai.fetch_model_info_by_hash(checksum)
+            ret = civitai.fetch_model_info_by_hash(checksum, progress_bar=False)
             if ret is None:
                 print("Failed to retrieve model of {} from Civitai!".format(file))
             else:
