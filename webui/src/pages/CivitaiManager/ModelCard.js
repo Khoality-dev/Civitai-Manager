@@ -10,11 +10,12 @@ import Typography from "@mui/material/Typography";
 import convertImageBufferToUrl from "../../utils/utils";
 
 function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
-  const [imageSrc, setImageSrc] = useState("");
+  const [imageSrc, setImageSrc] = useState("./empty_image.jpg");
   const [showDetails, setShowDetails] = useState(false);
   const cardStandardSize = [380, 320];
 
   const retrieveNewImage = () => {
+    setImageSrc("./empty_image.jpg");
     if (inView) {
       axios
         .get("/model/preview-images", {
@@ -37,7 +38,6 @@ function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
   });
 
   useEffect(() => {
-    setImageSrc("./empty_image.jpg");
     const timeoutFunc = () => {
       retrieveNewImage();
 
