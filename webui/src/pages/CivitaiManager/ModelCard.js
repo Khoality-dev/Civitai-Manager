@@ -37,6 +37,7 @@ function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
   });
 
   useEffect(() => {
+    setImageSrc("./empty_image.jpg");
     const timeoutFunc = () => {
       retrieveNewImage();
 
@@ -51,7 +52,7 @@ function ModelCard({ model_id, model_title, model_type, onClickHandler }) {
       const initialDelay = 0;
       setTimeout(timeoutFunc, initialDelay);
     }
-  }, [inView]);
+  }, [inView, model_id]);
 
   const handleOnMouseEnter = () => {
     setShowDetails(true);
