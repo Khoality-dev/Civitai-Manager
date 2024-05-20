@@ -179,7 +179,7 @@ def fetch_all_models():
     platform = Civitai(app_configs.CIVITAI_API_KEY)
 
     for model in models:
-        result = platform.fetch_model_info({"model_id": json.loads(model.blob)["id"]})
+        result = platform.fetch_model_info({"model_id": model.blob["id"]})
 
     return jsonify({"message": "Success"}), 200
 
@@ -294,7 +294,7 @@ def download_model_version():
     model_version_id = request.args.get("model_version_id")
 
     version = db.session.query(Version).filter_by(id=model_version_id).first()
-    json_blob = json.loads(version.blob)
+    json_blob = version.blob
 
     platform = Civitai(app_configs.CIVITAI_API_KEY)
 
