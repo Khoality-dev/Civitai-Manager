@@ -18,7 +18,7 @@ opencv-python==4.9.0.80
 psycopg2==2.9.9
 requests==2.31.0
 SQLAlchemy==2.0.29
-tqdm==4.66.2
+tqdm==4.66.3
 typing_extensions==4.11.0
 urllib3==2.2.1
 Werkzeug==3.0.2
