@@ -304,6 +304,8 @@ def download_model_version():
         model_type = "Lora"
     elif str(version.type).lower() == "checkpoint":
         model_type = "Stable-diffusion"
+    else:
+        model_type = "Others"
 
     model_name = sanitize_filename(version.model.name)
 
