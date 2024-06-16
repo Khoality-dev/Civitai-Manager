@@ -138,6 +138,8 @@ def get_models():
             "id": model.id,
             "name": model.name,
             "type": model.type,
+            "created_at": model.created_at,
+            "updated_at": model.updated_at,
             "url": model.request_url,
         }
         for model in models
@@ -163,6 +165,8 @@ def get_model_versions():
             "name": version.name,
             "positive_prompts": version.positive_prompts,
             "negative_prompts": version.negative_prompts,
+            "created_at": version.created_at,
+            "updated_at": version.updated_at,
         }
         for version in versions
     ]

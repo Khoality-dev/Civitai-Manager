@@ -1,6 +1,7 @@
 import json
 import os
 
+from sqlalchemy import func
 from tqdm import tqdm
 from database.models import Model, Version
 from platforms.platform import Platform
@@ -55,6 +56,10 @@ class Civitai(Platform):
             )
             if existing_model:
                 model.id = existing_model.id
+            else:
+                model.created_at = func.now()
+
+            model.updated_at = func.now()
             db.session.merge(model)
             db.session.commit()
 
@@ -91,7 +96,10 @@ class Civitai(Platform):
                 )
                 if existing_child:
                     version.id = existing_child.id
+                else:
+                    version.created_at = func.now()
 
+                version.updated_at = func.now()
                 db.session.merge(version)
                 db.session.commit()
 
