@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, DateTime, Integer, String, ForeignKey, func
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.dialects.postgresql import JSONB
 Base = declarative_base()
@@ -13,6 +13,8 @@ class Model(Base):
     type = Column("type", String(50))
     platform = Column("platform", String(50))
     request_url = Column("request_url", String())
+    created_at = Column("created_at", DateTime(timezone=True), default=func.now(), nullable=False)
+    updated_at = Column("updated_at", DateTime(timezone=True), default=func.now(), nullable=False)
     blob = Column("blob", JSONB)
     versions = relationship("Version", back_populates="model")
 
@@ -28,5 +30,7 @@ class Version(Base):
     negative_prompts = Column("negative_prompts", String())
     custom_positive_prompts = Column("custom_positive_prompts", String())
     custom_negative_prompts = Column("custom_negative_prompts", String())
+    created_at = Column("created_at", DateTime(timezone=True), default=func.now(), nullable=False)
+    updated_at = Column("updated_at", DateTime(timezone=True), default=func.now(), nullable=False)
     blob = Column("blob", JSONB)
     model = relationship("Model", back_populates="versions")
