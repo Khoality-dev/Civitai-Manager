@@ -29,7 +29,7 @@ function CivitaiManagerPage() {
       .then((response) => {
         // Extract model IDs from the response data
         const list_models = response.data["models"];
-        list_models.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+        list_models.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at));
         // Update the state with the model IDs
         setModels(list_models);
       })
