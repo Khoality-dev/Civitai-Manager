@@ -317,6 +317,8 @@ def download_model_version():
         app_configs.MODELS_DIRECTORY, model_type, model_name
     )
 
+    os.makedirs(destination_directory, exist_ok=True)
+
     file_blobs = json_blob["files"]
     destination_paths = []
     urls = []
@@ -324,9 +326,8 @@ def download_model_version():
         filename = file["name"]
         file_path = os.path.join(destination_directory, filename)
         if file_path.endswith(".safetensors") and not os.path.exists(file_path.replace(".safetensors",".preview.png")):
-            images = os.listdir(os.path.join(app_configs.IMAGES_DIRECTORY, str(version.id), "model_previews"))
-            shutil.copy(os.path.join(app_configs.IMAGES_DIRECTORY, str(version.id), "model_previews", images[0]), file_path.replace(".safetensors",".preview.png"))
-
+                    images = os.listdir(os.path.join(app_configs.IMAGES_DIRECTORY, str(version.id), "model_previews"))
+                    shutil.copy(os.path.join(app_configs.IMAGES_DIRECTORY, str(version.id), "model_previews", images[0]), file_path.replace(".safetensors",".preview.png"))
         if not (os.path.isfile(file_path)):
             destination_paths.append(file_path)
             urls.append(file["downloadUrl"])
